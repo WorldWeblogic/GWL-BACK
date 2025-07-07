@@ -252,14 +252,13 @@ exports.deletecompany = async (req, res) => {
 
 exports.CreateCompany = async (req, res) => {
   try {
-    const { companyId, name, manager, email, phone, companyaddress, employeeid } = req.body;
-  const pdf1Path = req.files?.pdf1?.[0]
-  ? `/uploads/companypdfs/${req.files.pdf1[0].filename}`
-  : null;
-
-const pdf2Path = req.files?.pdf2?.[0]
-  ? `/uploads/companypdfs/${req.files.pdf2[0].filename}`
-  : null;
+    const { companyId, name, manager, email, phone, companyaddress, employeeid, emetID } = req.body;
+    console.log('====================================');
+    console.log(req.body);
+    console.log('====================================');
+    const pdf1Path = req.files?.pdf1?.[0]
+      ? `/uploads/companypdfs/${req.files.pdf1[0].filename}`
+      : null;
 
     if (!companyId || !name || !manager || !email || !phone || !companyaddress || !employeeid) {
       return res.status(400).json({ success: false, message: "Please fill in all fields" });
@@ -287,10 +286,10 @@ const pdf2Path = req.files?.pdf2?.[0]
       email,
       phone,
       companyaddress,
-      employeeid : employeeid,
+      employeeid: employeeid,
       employee: employee._id,
       pdf1Path,
-      pdf2Path,
+      emetID: emetID
     });
 
     let token = jwt.sign({ id: company._id }, process.env.JWT_SECRET, { expiresIn: "7d" });
@@ -343,12 +342,12 @@ exports.getallcompany = async (req, res) => {
   try {
     const company = await Company.find({ isDeleted: false })
       .populate({
-        path:"employee",
-        match:{isDeleted:false,status:"Approved"}
+        path: "employee",
+        match: { isDeleted: false, status: "Approved" }
       })
       .populate({
         path: "customers",
-        match: { isDeleted: false,status:"Approved" },
+        match: { isDeleted: false, status: "Approved" },
       })
       .sort({ createdAt: -1 });
 
@@ -364,76 +363,6 @@ exports.getallcompany = async (req, res) => {
     });
   }
 };
-
-// exports.updatecompany = async (req, res) => {
-//   try {
-//     const { companyId } = req.params;
-//     const { name, companyaddress, email, phone, employeeid } = req.body;
-
-//     // Validate fields
-//     if (!name || !companyaddress || !email || !phone || !employeeid) {
-//       return res.status(400).json({
-//         success: false,
-//         message: "please fill in all fields"
-//       });
-//     }
-
-//     const company = await Company.findOne({ companyId });
-//     if (!company) {
-//       return res.status(404).json({
-//         success: false,
-//         message: "Company not found.",
-//       });
-//     }
-
-//     const oldEmployeeId = company.employeeid;
-
-//     // Check if employeeid is being changed
-//     if (oldEmployeeId !== employeeid) {
-//       const oldEmployee = await Employee.findOne({ employeeid: oldEmployeeId });
-//       const newEmployee = await Employee.findOne({ employeeid });
-
-//       if (!newEmployee) {
-//         return res.status(400).json({
-//           success: false,
-//           message: "New employee not found",
-//         });
-//       }
-
-//       // Remove company reference from old employee
-//       if (oldEmployee) {
-//         oldEmployee.company.pull(company._id);
-//         await oldEmployee.save();
-//       }
-
-//       // Add company reference to new employee
-//       newEmployee.company.addToSet(company._id);
-//       await newEmployee.save();
-
-//       //  Update employeeid in the company only if changed
-//       company.employeeid = employeeid;
-//     }
-
-//     // Always update other company fields
-//     company.name = name;
-//     company.companyaddress = companyaddress;
-//     company.email = email;
-//     company.phone = phone;
-
-//     await company.save();
-
-//     res.status(200).json({
-//       success: true,
-//       message: "Company updated successfully.",
-//       company,
-//     });
-//   } catch (err) {
-//     return res.status(500).json({
-//       success: false,
-//       message: err.message,
-//     });
-//   }
-// };
 
 
 exports.updatecompany = async (req, res) => {
@@ -556,7 +485,7 @@ exports.getCompany = async (req, res) => {
 exports.getLastComId = async (req, res) => {
   try {
     const lastComId = await Company.findOne({})
-      .sort({ createdAt:-1 })
+      .sort({ createdAt: -1 })
       .select("companyId");
 
     if (!lastComId) {
@@ -580,3 +509,35 @@ exports.getLastComId = async (req, res) => {
     });
   }
 };
+
+exports.getEID = async (req, res) => {
+  try {
+    let unique = false;
+    let newId;
+
+    while (!unique) {
+      newId = "";
+      for (let i = 0; i < 12; i++) {
+        newId += Math.floor(Math.random() * 10);
+      }
+
+      const existing = await Company.findOne({ emetID: newId });
+      if (!existing) {
+        unique = true;
+      }
+    }
+
+    return res.status(200).json({
+      success: true,
+      emetID: newId,
+      message: "Random unique company ID generated",
+    });
+
+  } catch (error) {
+    console.error("Error generating random company ID:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
+  }
+}

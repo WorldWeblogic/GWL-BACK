@@ -2,8 +2,8 @@ const express = require('express')
 const router = express.Router();
 
 const upload = require("../middleware/pdf-upload-middleware");
- 
-const { signup, login, user, updateCustomer, getallcustomer, softdeletecustomer, updatesinglecustomer, approvecustomer, deleteCustomer, rejectcustomer,getLastCusId } = require("../controllers/customer-controllers")
+
+const { signup, login, user, updateCustomer, getallcustomer, softdeletecustomer, updatesinglecustomer, approvecustomer, deleteCustomer, rejectcustomer, getLastCusId } = require("../controllers/customer-controllers")
 
 const { signupAdmin, loginAdmin, admin, updateadmin } = require("../controllers/admin-controller");
 
@@ -16,19 +16,19 @@ const { signupManager, loginManager, manager, getallmanager, softdeletemanager, 
 // const loginSchema = require("../validators/user-validator");
 // const addcustomerschema = require("../validators/user-validator");
 
-const { createOffer, getalloffer, updateoffer, softdeleteoffer, approveOffer, deleteOffer, rejectOffer, getSingleCustomerOffer, getapproveoffer, getLastOfferId} = require('../controllers/offer-controller');
+const { createOffer, getalloffer, updateoffer, softdeleteoffer, approveOffer, deleteOffer, rejectOffer, getSingleCustomerOffer, getapproveoffer, getLastOfferId } = require('../controllers/offer-controller');
 
-const { upcomingcreateOffer, upcomingupdateoffer, upcomingsoftdeleteoffer, allupcomingoffer, deleteupcomingOffer, approveupcomingOffer, rejectupcomingOffer, getSingleCustomerUpcomingOffer, allapproveupcomingoffer,getLastCusOfferId } = require('../controllers/upcomingoffer-controller');
+const { upcomingcreateOffer, upcomingupdateoffer, upcomingsoftdeleteoffer, allupcomingoffer, deleteupcomingOffer, approveupcomingOffer, rejectupcomingOffer, getSingleCustomerUpcomingOffer, allapproveupcomingoffer, getLastCusOfferId } = require('../controllers/upcomingoffer-controller');
 
 const { employeecreateOffer, employeegetalloffer, getSingleEmpOffer, employeeupdateoffer, employeesoftdeleteoffer, approveEmployeeOffer, deleteEmployeeOffer, rejectEmployeeOffer, employeegetallapproveoffer, getLastAddEmpOffer } = require('../controllers/employee-offer-controller');
 
 const { upcomingcreateemployeeOffer, allupcomingemployeeoffer, upcomingupdateemployeeoffer, upcomingsoftdeleteemployeeoffer, deleteemployeeupcomingOffer, approveemployeeupcomingOffer, rejectemployeeupcomingOffer, getSingleEmpUpOffer, employeegetallupcomapproveoffer, getLastEmpOfferId } = require('../controllers/EmployeeUpcomingOffer-controllers');
 
-const { CreateCompany, softdeletecompany, getallcompany, updatecompany, approvecompany, deletecompany, rejectcompany, getCompany, requestcompanypoints, allcompanyrequest, companypointsreview, getLastComId } = require('../controllers/Company-controller');
+const { CreateCompany, softdeletecompany, getallcompany, updatecompany, approvecompany, deletecompany, rejectcompany, getCompany, requestcompanypoints, allcompanyrequest, companypointsreview, getLastComId, getEID } = require('../controllers/Company-controller');
 
 const { signuplowerManager, loginlowerManager, lowermanager, updatelowerManager, getallLowermanager, softdeletelowermanager, updatesingleLManager, getLastLowerManId } = require('../controllers/lowermanager-controller');
 
-const {sendMail}=require("../controllers/mail-controller");
+const { sendMail } = require("../controllers/mail-controller");
 
 // user routes
 // router.post("/signup",validate(addcustomerschema),signup);
@@ -47,7 +47,7 @@ router.put("/rejectcustomer/:id", rejectcustomer);
 router.post("/signupAdmin", signupAdmin);
 router.post("/loginAdmin", loginAdmin);
 router.get("/admin/:id", admin);
-router.put("/updateadmin/:id",updateadmin);
+router.put("/updateadmin/:id", updateadmin);
 
 // employee routes
 router.post("/signupEmployee", signupEmployee);
@@ -65,7 +65,7 @@ router.put("/rejectEmp/:id", rejectEmp);
 router.post("/request", requestpoints);
 router.get("/allrequest", allrequest);
 router.post('/review/:id', pointsreview);
-router.get('/empleader',getleaderboard);
+router.get('/empleader', getleaderboard);
 
 // manager routes
 router.post("/signupManager", signupManager);
@@ -75,12 +75,12 @@ router.get("/allmanager", getallmanager);
 router.put("/superManagerProfile/:id", updatesingleSManager);
 router.patch("/delete-manager/:id", softdeletemanager);
 router.put('/update-manager/:managerid', updateManager);
-router.get("/getLastSuperManager",getLastSuperManId);
+router.get("/getLastSuperManager", getLastSuperManId);
 
 // offer route
 router.post("/create-offer", createOffer);
 router.get("/get-offer", getalloffer)
-router.get("/get-approveoffer",getapproveoffer)
+router.get("/get-approveoffer", getapproveoffer)
 router.get("/getSingleCustomerOffer/:id", getSingleCustomerOffer)
 router.put("/update-offer/:offerid", updateoffer);
 router.patch("/delete-offer/:id", softdeleteoffer);
@@ -107,7 +107,7 @@ router.get("/getLastEmpOffeerId", getLastAddEmpOffer);
 // upcoming offer route
 router.post("/upcomingcreate-offer", upcomingcreateOffer);
 router.get("/getupcoming-offer", allupcomingoffer);
-router.get("/get-approveupcomingoffer",allapproveupcomingoffer)
+router.get("/get-approveupcomingoffer", allapproveupcomingoffer)
 router.get("/singleCust-upcoming-offer/:id", getSingleCustomerUpcomingOffer);
 router.get("/last-cust-up-offer-id", getLastCusOfferId);
 router.put("/upcomingupdate-offer/:offerid", upcomingupdateoffer);
@@ -132,8 +132,7 @@ router.put("/rejectemployeeupcomingoffer/:id", rejectemployeeupcomingOffer);
 router.post(
   "/create-company",
   upload.fields([
-    { name: "pdf1", maxCount: 1 },
-    { name: "pdf2", maxCount: 1 }
+    { name: "pdf1", maxCount: 1 }
   ]),
   CreateCompany
 );
@@ -144,8 +143,7 @@ router.get("/getCompany/:id", getCompany);
 router.put(
   "/updatecompany/:companyId",
   upload.fields([
-    { name: "pdf1", maxCount: 1 },
-    { name: "pdf2", maxCount: 1 }
+    { name: "pdf1", maxCount: 1 }
   ]),
   updatecompany
 );
@@ -156,6 +154,7 @@ router.post("/companypoints", requestcompanypoints);
 router.get("/allcompanyrequest", allcompanyrequest);
 router.post('/reviewpoints/:id', companypointsreview);
 router.get("/getLastComId", getLastComId);
+router.get("/getEId", getEID);
 
 // lower manager route
 router.post("/create-lowermanager", signuplowerManager);
@@ -165,7 +164,7 @@ router.put("/update-lowermanager/:managerid", updatelowerManager)
 router.put("/update-singleLM/:id", updatesingleLManager)
 router.get("/allLowermanager", getallLowermanager);
 router.patch("/deletelowermanager/:id", softdeletelowermanager);
-router.get("/getLastLowerMan",getLastLowerManId)
+router.get("/getLastLowerMan", getLastLowerManId)
 
 // send mail
 router.post('/send-mail', sendMail);
