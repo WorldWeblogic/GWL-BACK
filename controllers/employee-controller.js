@@ -9,7 +9,7 @@ const PointRequest = require("../models/Employeepoints-model");
 // Manager requests to add/deduct points
 exports.requestpoints = async (req, res) => {
   try {
-    const { employeeid, type, value, manager,notification } = req.body;
+    const { employeeid, type, value, manager, notification } = req.body;
     if (!type || !value || !manager || !notification) {
       return res.status(400).json({
         success: false,
@@ -113,7 +113,7 @@ exports.allrequest = async (req, res) => {
   try {
     const requests = await PointRequest.find().populate({
       path: "employee",
-      match: { status: "Approved",isDeleted:false },
+      match: { status: "Approved", isDeleted: false },
     });
     res.status(200).json({
       success: true,
@@ -251,7 +251,7 @@ exports.getallemployee = async (req, res) => {
     const employees = await Employee.find({ isDeleted: false })
       .populate({
         path: "company",
-        match: { isDeleted: false,status:"Approved" },
+        match: { isDeleted: false, status: "Approved" },
       })
       .sort({ createdAt: -1 });
 
@@ -275,7 +275,7 @@ exports.getleaderboard = async (req, res) => {
         path: "company",
         match: { isDeleted: false, status: "Approved" },
       })
-      .sort({ points: -1 }); 
+      .sort({ points: -1 });
 
     res.status(200).json({
       success: true,
@@ -477,7 +477,7 @@ exports.deleteEmp = async (req, res) => {
 // create new employee
 exports.signupEmployee = async (req, res) => {
   try {
-    const { email, password, firstname, lastname, employeeid, phone, manager } =
+    const { email, password, firstname, lastname, employeeid, phone, manager, managerEmail } =
       req.body;
     if (
       !email ||
@@ -536,6 +536,7 @@ exports.signupEmployee = async (req, res) => {
       employeeid,
       phone,
       manager,
+      managerEmail: managerEmail
     });
     let token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, {
       expiresIn: "7d",
@@ -672,7 +673,7 @@ exports.updatesingleemployee = async (req, res) => {
 exports.getLastEmpId = async (req, res) => {
   try {
     const lastEmpId = await Employee.findOne({})
-      .sort({ createdAt:-1 })
+      .sort({ createdAt: -1 })
       .select("employeeid");
 
     if (!lastEmpId) {
