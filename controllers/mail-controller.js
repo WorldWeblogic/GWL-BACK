@@ -3,9 +3,6 @@ require("dotenv").config();
 
 exports.sendMail = async (req, res) => {
   const { to, subject, text } = req.body;
-
-  console.log("Incoming email request body:", req.body);
-
   try {
     const transporter = nodemailer.createTransport({
       service: "gmail",
