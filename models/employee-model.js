@@ -90,13 +90,16 @@ const EmployeeSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    status:{
-      type:String,
-      enum:["Pending","Approved","Rejected","Delete"],
-      default:"Pending",
+    status: {
+      type: String,
+      enum: ["Pending", "Approved", "Rejected", "Delete"],
+      default: "Pending",
     },
-    manager:{
-      type:String,
+    manager: {
+      type: String,
+    },
+    managerEmail: {
+      type: String,
     },
     company: [
       {

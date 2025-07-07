@@ -1,64 +1,66 @@
 const mongoose = require("mongoose");
 const { required } = require("../validators/user-validator");
+const { string } = require("zod");
 
 const companySchema = new mongoose.Schema({
-  companyId:{
-    type:String,
-    required:true,
-    unique:true,
+  companyId: {
+    type: String,
+    required: true,
+    unique: true,
   },
-  employeeid:{
-    type:String,
-    required:true,
+  employeeid: {
+    type: String,
+    required: true,
   },
-  name:{
+  name: {
     type: String,
     required: true,
   },
   isDeleted: {
-      type: Boolean,
-      default: false,
+    type: Boolean,
+    default: false,
   },
-  status:{
-      type:String,
-      enum:["Pending","Approved","Rejected","Delete"],
-      default:"Pending",
+  status: {
+    type: String,
+    enum: ["Pending", "Approved", "Rejected", "Delete"],
+    default: "Pending",
   },
-  points:{
-    type:Number,
-    default:0,
+  points: {
+    type: Number,
+    default: 0,
   },
-  trophy: { 
+  trophy: {
     type: String,
     default: null
   },
-  trophyDate: { 
+  trophyDate: {
     type: Date,
     default: null
   },
-  email:{
-    type:String,
-    required:true,
+  email: {
+    type: String,
+    required: true,
   },
-  phone:{
-    type:Number,
-    required:true,
+  phone: {
+    type: Number,
+    required: true,
   },
-  companyaddress:{
-    type:String,
-    required:true,
+  companyaddress: {
+    type: String,
+    required: true,
   },
-  manager:{
-     type:String,
+  manager: {
+    type: String,
   },
-     pdf1Path: {
-      type: String,
-      default: null,
-    },
-    pdf2Path: {
-      type: String,
-      default: null,
-    },
+  pdf1Path: {
+    type: String,
+    default: null,
+  },
+  emetID: {
+    type: String,
+    required: true,
+    unique: true,
+  },
   customers: [
     {
       type: mongoose.Schema.Types.ObjectId,
@@ -72,9 +74,9 @@ const companySchema = new mongoose.Schema({
     },
   ]
 },
-{
-  timestamps: true,
-}
+  {
+    timestamps: true,
+  }
 );
 
 module.exports = mongoose.model("Company", companySchema);
