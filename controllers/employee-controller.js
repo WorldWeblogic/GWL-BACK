@@ -270,12 +270,7 @@ exports.getallemployee = async (req, res) => {
 
 exports.getleaderboard = async (req, res) => {
   try {
-    const employees = await Employee.find({ isDeleted: false })
-      .populate({
-        path: "company",
-        match: { isDeleted: false, status: "Approved" },
-      })
-      .sort({ points: -1 }); 
+    const employees = await Employee.find({ isDeleted: false, status:"Approved" }) .sort({ TotalPoints: -1 });
 
     res.status(200).json({
       success: true,
