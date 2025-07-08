@@ -2,13 +2,13 @@ const nodemailer = require("nodemailer");
 require("dotenv").config();
 
 exports.sendMail = async (req, res) => {
-  const { to, subject, text } = req.body;
+  const { to, subject, html } = req.body;
   try {
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
         user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS, 
+        pass: process.env.EMAIL_PASS,
       },
     });
 
@@ -16,7 +16,7 @@ exports.sendMail = async (req, res) => {
       from: process.env.EMAIL_USER,
       to,
       subject,
-      text,
+      html,
     };
 
     await transporter.sendMail(mailOptions);
