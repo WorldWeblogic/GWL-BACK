@@ -618,9 +618,9 @@ exports.loginEmployee = async (req, res) => {
 exports.updatesingleemployee = async (req, res) => {
   try {
     const userdata = await Employee.findById(req.params.id);
-    const { firstname, lastname, email, phone } = req.body;
+    const { firstname, lastname, password, phone } = req.body;
 
-    if (!email || !lastname || !firstname || !phone) {
+    if (!password || !lastname || !firstname || !phone) {
       return res.status(400).json({
         success: false,
         message: "Please fill in all fields",
@@ -633,19 +633,21 @@ exports.updatesingleemployee = async (req, res) => {
         message: "employee not found",
       });
     }
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid email format",
-      });
-    }
+  
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+        if (!passwordRegex.test(password)) {
+        return res.status(400).json({
+          success: false,
+          message:
+            "Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character",
+        });
+      }
+       const hashedPassword = await bcrypt.hash(password, 10);
 
     // Update fields
     userdata.firstname = firstname.charAt(0).toUpperCase() + firstname.slice(1);
     userdata.lastname = lastname;
-    userdata.email = email;
+    userdata.password = hashedPassword;
     userdata.phone = phone;
 
     await userdata.save();

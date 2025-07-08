@@ -286,9 +286,9 @@ exports.loginlowerManager = async (req, res) => {
 exports.updatesingleLManager = async (req, res) => {
   try {
     const lowerManager = await Manager.findById(req.params.id);
-    const { firstname, lastname, email } = req.body;
+    const { firstname, lastname, password, phone } = req.body;
 
-    if (!email || !lastname || !firstname) {
+    if (!password || !lastname || !firstname || !phone) {
       return res.status(400).json({
         success: false,
         message: "Please fill in all fields",
@@ -301,19 +301,21 @@ exports.updatesingleLManager = async (req, res) => {
         message: "Lower Manager not found",
       });
     }
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid email format",
-      });
-    }
-
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+        if (!passwordRegex.test(password)) {
+          return res.status(400).json({
+            success: false,
+            message:
+              "Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character",
+          });
+        }
+        const hashedPassword = await bcrypt.hash(password, 10);
+    
     // Update fields
     lowerManager.firstname = firstname.charAt(0).toUpperCase() + firstname.slice(1);
     lowerManager.lastname = lastname;
-    lowerManager.email = email;
+    lowerManager.phone = phone;
+    lowerManager.password=hashedPassword;
 
     await lowerManager.save();
 
