@@ -139,14 +139,14 @@ router.post(
 router.patch("/softdelete-company/:id", softdeletecompany);
 router.get("/getallcompany", getallcompany);
 router.get("/getCompany/:id", getCompany);
-// router.put("/updatecompany/:companyId", updatecompany);
-router.put(
-  "/updatecompany/:companyId",
-  upload.fields([
-    { name: "pdf1", maxCount: 1 }
-  ]),
-  updatecompany
-);
+router.put("/updatecompany/:companyId", updatecompany);
+// router.put(
+//   "/updatecompany/:companyId",
+//   upload.fields([
+//     { name: "pdf1", maxCount: 1 }
+//   ]),
+//   updatecompany
+// );
 router.put("/approvecompany/:id", approvecompany);
 router.put("/deletecompany/:id", deletecompany);
 router.put("/rejectcompany/:id", rejectcompany);

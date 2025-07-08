@@ -252,10 +252,7 @@ exports.deletecompany = async (req, res) => {
 
 exports.CreateCompany = async (req, res) => {
   try {
-    const { companyId, name, manager, email, phone, companyaddress, employeeid, emetID } = req.body;
-    console.log('====================================');
-    console.log(req.body);
-    console.log('====================================');
+    const { companyId, name, manager, email, phone, companyaddress, employeeid, emetID, managerEmail } = req.body;
     const pdf1Path = req.files?.pdf1?.[0]
       ? `/uploads/companypdfs/${req.files.pdf1[0].filename}`
       : null;
@@ -289,7 +286,8 @@ exports.CreateCompany = async (req, res) => {
       employeeid: employeeid,
       employee: employee._id,
       pdf1Path,
-      emetID: emetID
+      emetID: emetID,
+      managerEmail: managerEmail
     });
 
     let token = jwt.sign({ id: company._id }, process.env.JWT_SECRET, { expiresIn: "7d" });
@@ -427,16 +425,8 @@ exports.updatecompany = async (req, res) => {
       ? `/uploads/companypdfs/${req.files.pdf1[0].filename}`
       : null;
 
-    const pdf2Path = req.files?.pdf2?.[0]
-      ? `/uploads/companypdfs/${req.files.pdf2[0].filename}`
-      : null;
-
     if (pdf1Path) {
       company.pdf1Path = pdf1Path;
-    }
-
-    if (pdf2Path) {
-      company.pdf2Path = pdf2Path;
     }
 
     // Save updated company

@@ -61,6 +61,9 @@ const companySchema = new mongoose.Schema({
     required: true,
     unique: true,
   },
+  managerEmail: {
+    type: String
+  },
   customers: [
     {
       type: mongoose.Schema.Types.ObjectId,
