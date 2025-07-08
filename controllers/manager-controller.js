@@ -11,14 +11,7 @@ exports.updateManager = async (req, res) => {
   const { firstname, lastname, email, phone, password } = req.body;
 
   // Check if all required fields are present
-  if (
-    !email ||
-    !password ||
-    !lastname ||
-    !firstname ||
-    !managerid ||
-    !phone
-  ) {
+  if (!email || !password || !lastname || !firstname || !managerid || !phone) {
     return res.status(400).json({
       success: false,
       message: "Please fill in all fields",
@@ -83,7 +76,9 @@ exports.updateManager = async (req, res) => {
 // get all manager
 exports.getallmanager = async (req, res) => {
   try {
-    const manager = await Manager.find({ isDeleted: false }).sort({ createdAt: -1, });
+    const manager = await Manager.find({ isDeleted: false }).sort({
+      createdAt: -1,
+    });
     res.status(200).json({
       success: true,
       message: "manager data get",
@@ -101,9 +96,9 @@ exports.getallmanager = async (req, res) => {
 exports.updatesingleSManager = async (req, res) => {
   try {
     const superManager = await Manager.findById(req.params.id);
-    const { firstname, lastname, email } = req.body;
+    const { firstname, lastname, password, phone } = req.body;
 
-    if (!email || !lastname || !firstname) {
+    if (!password || !lastname || !firstname || !phone) {
       return res.status(400).json({
         success: false,
         message: "Please fill in all fields",
@@ -117,18 +112,21 @@ exports.updatesingleSManager = async (req, res) => {
       });
     }
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+    if (!passwordRegex.test(password)) {
       return res.status(400).json({
         success: false,
-        message: "Invalid email format",
+        message:
+          "Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character",
       });
     }
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     // Update fields
-    superManager.firstname = firstname.charAt(0).toUpperCase() + firstname.slice(1);
+    superManager.firstname =firstname.charAt(0).toUpperCase() + firstname.slice(1);
     superManager.lastname = lastname;
-    superManager.email = email;
+    superManager.password = hashedPassword;
+    superManager.phone = phone;
 
     await superManager.save();
 
@@ -199,7 +197,14 @@ exports.manager = async (req, res) => {
 exports.signupManager = async (req, res) => {
   try {
     const { email, password, managerid, phone, firstname, lastname } = req.body;
-    if (!email || !password || !managerid || !phone || !firstname || !lastname) {
+    if (
+      !email ||
+      !password ||
+      !managerid ||
+      !phone ||
+      !firstname ||
+      !lastname
+    ) {
       return res.status(400).json({
         success: false,
         message: "Please fill in all fields",
@@ -325,12 +330,11 @@ exports.loginManager = async (req, res) => {
   }
 };
 
-
 //fetch last added offer ID;
 exports.getLastSuperManId = async (req, res) => {
   try {
     const lastSuperMan = await Manager.findOne({})
-      .sort({ createdAt:-1 })
+      .sort({ createdAt: -1 })
       .select("managerid");
     if (!lastSuperMan) {
       return res.status(200).json({
@@ -353,8 +357,6 @@ exports.getLastSuperManId = async (req, res) => {
     });
   }
 };
-
-
 
 // // update single Lower manager
 // exports.updatesingleSManager = async (req, res) => {
