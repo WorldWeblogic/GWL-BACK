@@ -1,16 +1,16 @@
-const express=require("express")
+const express = require("express")
 const app = express();
-const cors=require('cors')
-const database=require("./config/database")
-const cookieParser=require('cookie-parser')
+const cors = require('cors')
+const database = require("./config/database")
+const cookieParser = require('cookie-parser')
 const userRoutes = require('./routes/route');
 const errorMiddleware = require("./middleware/error-middleware");
 const path = require("path");
 // port connection
-const dotenv=require("dotenv");
+const dotenv = require("dotenv");
 
 dotenv.config();
-const PORT=process.env.PORT || 4000;
+const PORT = process.env.PORT || 4000;
 
 //database connect
 database.connect();
@@ -24,6 +24,7 @@ app.use(cookieParser())
 
 const allowedOrigins = [
   'http://localhost:3000',
+  'https://gwl-front.vercel.app'
 ];
 
 const corsOptions = {
@@ -33,8 +34,8 @@ const corsOptions = {
     }
     return callback(new Error('Not allowed by CORS'));
   },
-  	methods:["GET","POST","PUT","DELETE","PATCH"],
-	allowedHeaders:["Content-Type","Authorization"],
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
+  allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true // only if you're using cookies or sessions,
 };
 
@@ -42,10 +43,10 @@ app.use(cors(corsOptions));
 // app.options('*',cors(corsOptions));
 
 app.get("/", (req, res) => {
-	return res.json({
-		success:true,
-		message:'Your server is up and running....'
-	});
+  return res.json({
+    success: true,
+    message: 'Your server is up and running....'
+  });
 });
 
 
@@ -58,6 +59,6 @@ app.use('/api', userRoutes);
 
 
 // port connection
-app.listen(PORT,()=>{
-    console.log(`server is running on port ${PORT}`)
+app.listen(PORT, () => {
+  console.log(`server is running on port ${PORT}`)
 })
