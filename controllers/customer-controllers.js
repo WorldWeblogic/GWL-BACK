@@ -45,16 +45,16 @@ exports.updatesinglecustomer = async (req, res) => {
         message: "User not found",
       });
     }
-    
+
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
     if (!passwordRegex.test(password)) {
-    return res.status(400).json({
-      success: false,
-      message:
-        "Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character",
-    });
-  }
-   const hashedPassword = await bcrypt.hash(password, 10);
+      return res.status(400).json({
+        success: false,
+        message:
+          "Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character",
+      });
+    }
+    const hashedPassword = await bcrypt.hash(password, 10);
     // Update fields
     userdata.firstname = firstname.charAt(0).toUpperCase() + firstname.slice(1);
     userdata.lastname = lastname;
@@ -216,7 +216,7 @@ exports.updateCustomer = async (req, res) => {
   const { customerid } = req.params;
   const { firstname, lastname, email, companyId, password } = req.body;
 
-  if ( !email ||!password ||!lastname || !firstname ||!customerid || !companyId) {
+  if (!email || !password || !lastname || !firstname || !customerid || !companyId) {
     return res.status(400).json({
       success: false,
       message: "Please fill in all fields",
@@ -278,7 +278,7 @@ exports.updateCustomer = async (req, res) => {
     customer.lastname = lastname;
     customer.email = email;
     customer.password = hashedPassword;
-    customer.companyId= companyId;
+    customer.companyId = companyId;
 
     await customer.save();
 
@@ -298,9 +298,9 @@ exports.updateCustomer = async (req, res) => {
 // create new customer
 exports.signup = async (req, res) => {
   try {
-    const { lastname, customerid, companyId, firstname, email, password, manager } = req.body;
+    const { lastname, customerid, companyId, firstname, email, password, manager, managerEmail } = req.body;
 
-    if (!email ||!password ||!lastname ||!firstname ||!customerid ||!companyId ||!manager) {
+    if (!email || !password || !lastname || !firstname || !customerid || !companyId || !manager) {
       return res.status(400).json({
         success: false,
         message: "Please fill in all fields",
@@ -356,6 +356,7 @@ exports.signup = async (req, res) => {
       manager,
       company: existingcompany._id,
       password: hashedPassword,
+      managerEmail: managerEmail
     });
 
     let token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, {
@@ -417,7 +418,7 @@ exports.login = async (req, res) => {
           "Password must be at least 3 characters long and contain at least one letter, one symbol and one number",
       });
     }
-    const user = await Customer.findOne({ email,status:"Approved" });
+    const user = await Customer.findOne({ email, status: "Approved" });
     if (!user) {
       return res.status(400).json({
         success: false,
@@ -479,7 +480,7 @@ exports.user = async (req, res) => {
 exports.getLastCusId = async (req, res) => {
   try {
     const lastCusId = await Customer.findOne({})
-      .sort({ createdAt:-1 })
+      .sort({ createdAt: -1 })
       .select("customerid");
 
     if (!lastCusId) {

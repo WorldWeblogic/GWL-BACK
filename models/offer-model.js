@@ -27,13 +27,16 @@ const offerSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    status:{
-      type:String,
-      enum:["Pending","Approved","Rejected","Delete"],
-      default:"Pending",
+    managerEmail: {
+      type: String
     },
-    manager:{
-      type:String,
+    status: {
+      type: String,
+      enum: ["Pending", "Approved", "Rejected", "Delete"],
+      default: "Pending",
+    },
+    manager: {
+      type: String,
     }
   },
   {

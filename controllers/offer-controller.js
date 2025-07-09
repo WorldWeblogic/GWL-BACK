@@ -216,6 +216,7 @@ exports.createOffer = async (req, res) => {
       endDate,
       offerid,
       manager,
+      managerEmail
     } = req.body;
 
     // Simple validation
@@ -241,6 +242,7 @@ exports.createOffer = async (req, res) => {
       endDate,
       offerid,
       manager,
+      managerEmail: managerEmail
     });
 
     await newOffer.save();
@@ -321,7 +323,7 @@ exports.getSingleCustomerOffer = async (req, res) => {
 exports.getLastOfferId = async (req, res) => {
   try {
     const lastOffer = await Offer.findOne({})
-      .sort({ createdAt:-1 })
+      .sort({ createdAt: -1 })
       .select("offerid");
 
     if (!lastOffer) {

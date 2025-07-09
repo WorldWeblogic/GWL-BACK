@@ -25,30 +25,34 @@ const CustomerSchema = new mongoose.Schema(
       required: true,
       unique: true,
     },
-    companyId:{
-      type:String,
-      require:true,
+    companyId: {
+      type: String,
+      require: true,
     },
     isDeleted: {
       type: Boolean,
       default: false,
     },
-    points:{
+    points: {
       type: Number,
       default: 0,
     },
-    status:{
-      type:String,
-      enum:["Pending","Approved","Rejected","Delete"],
-      default:"Pending",
+    status: {
+      type: String,
+      enum: ["Pending", "Approved", "Rejected", "Delete"],
+      default: "Pending",
     },
-    manager:{
-      type:String,
+    manager: {
+      type: String,
     },
-    company:[
+    managerEmail: {
+      type: String,
+      required: false,
+    },
+    company: [
       {
-        type:mongoose.Schema.Types.ObjectId,
-        ref:"Company"
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Company"
       }
     ],
     // employee: [
