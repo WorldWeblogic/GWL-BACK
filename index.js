@@ -23,7 +23,6 @@ app.use(cookieParser())
 
 
 const allowedOrigins = [
-  'http://localhost:3000',
   'https://gwl-front.vercel.app'
 ];
 

@@ -77,7 +77,7 @@ exports.upcomingupdateemployeeoffer = async (req, res) => {
 // Create a new offer
 exports.upcomingcreateemployeeOffer = async (req, res) => {
   try {
-    const { offerTitle, offerDescription, startDate, endDate, offerid, manager } = req.body;
+    const { offerTitle, offerDescription, startDate, endDate, offerid, manager, managerEmail } = req.body;
     // Simple validation
     if (
       !offerTitle ||
@@ -100,7 +100,8 @@ exports.upcomingcreateemployeeOffer = async (req, res) => {
       startDate,
       endDate,
       offerid,
-      manager
+      manager,
+      managerEmail: managerEmail
     });
 
     await newOffer.save();
@@ -315,7 +316,7 @@ exports.deleteemployeeupcomingOffer = async (req, res) => {
 exports.getLastEmpOfferId = async (req, res) => {
   try {
     const lastEmpOffer = await upcomingOffer.findOne({})
-      .sort({ createdAt:-1 })
+      .sort({ createdAt: -1 })
       .select("offerid");
 
     if (!lastEmpOffer) {

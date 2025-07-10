@@ -55,12 +55,6 @@ const CustomerSchema = new mongoose.Schema(
         ref: "Company"
       }
     ],
-    // employee: [
-    //   {
-    //     type:mongoose.Schema.Types.ObjectId,
-    //     ref: "Employee",
-    //   },
-    // ],
   },
   { timestamps: true }
 );

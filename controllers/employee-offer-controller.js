@@ -215,7 +215,10 @@ exports.employeecreateOffer = async (req, res) => {
       endDate,
       offerid,
       manager,
+      managerEmail
     } = req.body;
+
+    console.log(req.body);
 
     // Simple validation
     if (
@@ -240,6 +243,7 @@ exports.employeecreateOffer = async (req, res) => {
       endDate,
       offerid,
       manager,
+      managerEmail: managerEmail
     });
 
     await newOffer.save();
@@ -316,27 +320,27 @@ exports.getSingleEmpOffer = async (req, res) => {
 };
 
 //get last added employee offer Id
-exports.getLastAddEmpOffer =async (req,res) =>{
-  try
-  {const lastEmpOfferId = await Offer.findOne({})
-  .sort({createdAt : -1})
-  .select("offerid")
+exports.getLastAddEmpOffer = async (req, res) => {
+  try {
+    const lastEmpOfferId = await Offer.findOne({})
+      .sort({ createdAt: -1 })
+      .select("offerid")
 
-  if(!lastEmpOfferId){
-    return res.status(200).json({
-      success : true,
-      lastEmpOfferId : "0",
-      message : "No Employee Offer Found"
+    if (!lastEmpOfferId) {
+      return res.status(200).json({
+        success: true,
+        lastEmpOfferId: "0",
+        message: "No Employee Offer Found"
+      }
+      )
     }
-    )
+    res.status(200).json({
+      success: true,
+      lastEmpOfferId: lastEmpOfferId.offerid,
+      message: "Last Employee Offer Id Fetched Successfully"
+    })
   }
-res.status(200).json({
-  success : true,
-  lastEmpOfferId : lastEmpOfferId.offerid,
-  message : "Last Employee Offer Id Fetched Successfully"
-})
-}
-catch (error) {
+  catch (error) {
     console.error("Error fetching last Employee offerId:", error);
     res.status(500).json({
       success: false,
