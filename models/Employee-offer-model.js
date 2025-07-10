@@ -23,13 +23,16 @@ const employeeofferSchema = new mongoose.Schema(
       required: true,
       unique: true,
     },
-    status:{
-      type:String,
-      enum:["Pending","Approved","Rejected","Delete"],
-      default:"Pending",
+    status: {
+      type: String,
+      enum: ["Pending", "Approved", "Rejected", "Delete"],
+      default: "Pending",
     },
-    manager:{
-      type:String,
+    manager: {
+      type: String,
+    },
+    managerEmail: {
+      type: String
     },
     isDeleted: {
       type: Boolean,
