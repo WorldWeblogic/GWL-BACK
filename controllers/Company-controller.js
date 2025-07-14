@@ -8,7 +8,7 @@ const Employee = require("../models/employee-model");
 
 exports.requestcompanypoints = async (req, res) => {
   try {
-    const { companyId, type, value, manager, notification } = req.body;
+    const { companyId, type, value, manager, notification, managerEmail } = req.body;
 
     if (!type || !value || !manager || !notification) {
       return res.status(400).json({
@@ -40,6 +40,7 @@ exports.requestcompanypoints = async (req, res) => {
       manager,
       value: points,
       notification,
+      managerEmail: managerEmail
     });
 
     await request.save();
@@ -367,7 +368,6 @@ exports.updatecompany = async (req, res) => {
   try {
     const { companyId } = req.params;
     const { name, companyaddress, email, phone, employeeid } = req.body;
-
     // Validate fields
     if (!name || !companyaddress || !email || !phone || !employeeid) {
       return res.status(400).json({

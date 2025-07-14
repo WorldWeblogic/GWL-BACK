@@ -9,7 +9,7 @@ const PointRequest = require("../models/Employeepoints-model");
 // Manager requests to add/deduct points
 exports.requestpoints = async (req, res) => {
   try {
-    const { employeeid, type, value, manager, notification } = req.body;
+    const { employeeid, type, value, manager, notification, managerEmail } = req.body;
     if (!type || !value || !manager || !notification) {
       return res.status(400).json({
         success: false,
@@ -39,8 +39,10 @@ exports.requestpoints = async (req, res) => {
       type,
       manager,
       value: points,
-      notification
-    });
+      notification,
+      managerEmail: managerEmail
+    })
+
 
     await request.save();
 
@@ -271,7 +273,7 @@ exports.getallemployee = async (req, res) => {
 exports.getleaderboard = async (req, res) => {
   try {
 
-    const employees = await Employee.find({ isDeleted: false, status:"Approved" }) .sort({ TotalPoints: -1 });
+    const employees = await Employee.find({ isDeleted: false, status: "Approved" }).sort({ TotalPoints: -1 });
 
     res.status(200).json({
       success: true,
@@ -635,16 +637,16 @@ exports.updatesingleemployee = async (req, res) => {
         message: "employee not found",
       });
     }
-  
-        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
-        if (!passwordRegex.test(password)) {
-        return res.status(400).json({
-          success: false,
-          message:
-            "Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character",
-        });
-      }
-       const hashedPassword = await bcrypt.hash(password, 10);
+
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+    if (!passwordRegex.test(password)) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character",
+      });
+    }
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     // Update fields
     userdata.firstname = firstname.charAt(0).toUpperCase() + firstname.slice(1);

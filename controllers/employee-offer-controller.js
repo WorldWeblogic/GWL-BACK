@@ -218,8 +218,6 @@ exports.employeecreateOffer = async (req, res) => {
       managerEmail
     } = req.body;
 
-    console.log(req.body);
-
     // Simple validation
     if (
       !offerTitle ||
