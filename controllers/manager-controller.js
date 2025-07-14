@@ -123,7 +123,7 @@ exports.updatesingleSManager = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Update fields
-    superManager.firstname =firstname.charAt(0).toUpperCase() + firstname.slice(1);
+    superManager.firstname = firstname.charAt(0).toUpperCase() + firstname.slice(1);
     superManager.lastname = lastname;
     superManager.password = hashedPassword;
     superManager.phone = phone;
@@ -357,51 +357,3 @@ exports.getLastSuperManId = async (req, res) => {
     });
   }
 };
-
-// // update single Lower manager
-// exports.updatesingleSManager = async (req, res) => {
-//   try {
-//     const superManager = await Manager.findById(req.params.id);
-//     const { firstname, lastname, email } = req.body;
-
-//     if (!email || !lastname || !firstname) {
-//       return res.status(400).json({
-//         success: false,
-//         message: "Please fill in all fields",
-//       });
-//     }
-
-//     if (!superManager) {
-//       return res.status(404).json({
-//         success: false,
-//         message: "Super Manager not found",
-//       });
-//     }
-
-//     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-//     if (!emailRegex.test(email)) {
-//       return res.status(400).json({
-//         success: false,
-//         message: "Invalid email format",
-//       });
-//     }
-
-//     // Update fields
-//     superManager.firstname = firstname.charAt(0).toUpperCase() + firstname.slice(1);
-//     superManager.lastname = lastname;
-//     superManager.email = email;
-
-//     await superManager.save();
-
-//     res.status(200).json({
-//       success: true,
-//       message: "Super Manager updated successfully",
-//       superManager,
-//     });
-//   } catch (err) {
-//     return res.status(500).json({
-//       success: false,
-//       message: err.message,
-//     });
-//   }
-// };
