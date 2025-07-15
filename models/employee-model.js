@@ -12,6 +12,12 @@ const EmployeeSchema = new mongoose.Schema(
       required: true,
       minlength: 8,
     },
+    message: [
+      {
+        type: String,
+        default: "",
+      }
+    ],
     firstname: {
       type: String,
       required: true,

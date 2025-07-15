@@ -23,7 +23,7 @@ app.use(cookieParser())
 
 
 const allowedOrigins = [
-  'https://gwl-front.vercel.app'
+  'https://gwl-front.vercel.app',
 ];
 
 const corsOptions = {
