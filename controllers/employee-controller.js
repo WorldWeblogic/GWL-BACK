@@ -88,6 +88,9 @@ exports.pointsreview = async (req, res) => {
         );
       }
 
+      if (request.notification) {
+        employee.message.push(request.notification);
+      }
       await employee.save();
       request.status = "approved";
       request.message = "Request approved and points updated.";
@@ -430,20 +433,6 @@ exports.approveEmp = async (req, res) => {
 // delete customer
 exports.deleteEmp = async (req, res) => {
   try {
-    // const empId = req.params.id;
-    // const emp = await emp.findByIdAndDelete(empId);
-    // if (!emp) {
-    //   return res.status(404).json({
-    //     success: false,
-    //     message: "Employee not found.",
-    //   });
-    // }
-    // res.status(200).json({
-    //   success: true,
-    //   message: "Employee deleted permanently.",
-    //   emp,
-    // });
-
     const empId = req.params.id;
     // Find the employee first
     const emp = await Employee.findById(empId);
