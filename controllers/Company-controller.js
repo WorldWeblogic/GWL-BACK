@@ -446,7 +446,6 @@ exports.updatecompany = async (req, res) => {
 };
 
 
-
 // get single Company data
 exports.getCompany = async (req, res) => {
   try {
