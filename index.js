@@ -19,11 +19,13 @@ database.connect();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser())
+// app.use("/api", saleRoutes);
 
 
 
 const allowedOrigins = [
-  'https://gwl-front.vercel.app',
+  // 'https://gwl-front.vercel.app',
+  'http://localhost:3000',
 ];
 
 const corsOptions = {

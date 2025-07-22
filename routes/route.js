@@ -7,7 +7,7 @@ const { signup, login, user, updateCustomer, getallcustomer, softdeletecustomer,
 
 const { signupAdmin, loginAdmin, admin, updateadmin } = require("../controllers/admin-controller");
 
-const { signupEmployee, loginEmployee, getallemployee, updateEmployee, employee, monthlysaleform, softdeleteemployee, updatesingleemployee, approveEmp, deleteEmp, rejectEmp, requestpoints, allrequest, pointsreview, getLastEmpId, getleaderboard } = require("../controllers/employee-controller");
+const { signupEmployee, loginEmployee, getallemployee, updateEmployee, employee, monthlysaleform, softdeleteemployee, updatesingleemployee, approveEmp, deleteEmp, rejectEmp, requestpoints, allrequest, pointsreview, getLastEmpId, getleaderboard, saledata, singlesaledata, updatesaleform, filterEmployeeSales } = require("../controllers/employee-controller");
 
 const { signupManager, loginManager, manager, getallmanager, softdeletemanager, updateManager, updatesingleSManager, getLastSuperManId } = require("../controllers/manager-controller");
 
@@ -51,12 +51,11 @@ router.put("/updateadmin/:id", updateadmin);
 
 // employee routes
 router.post("/signupEmployee", signupEmployee);
-// router.post("/loginEmployee",validate(loginSchema),loginEmployee);
 router.post("/loginEmployee", loginEmployee);
 router.get("/allemployee", getallemployee);
 router.get("/employee/:id", employee);
 router.put('/update-employee/:employeeid', updateEmployee);
-router.put("/monthlysaleform/:id", monthlysaleform);
+router.post("/monthlysaleform", monthlysaleform);
 router.patch("/deleteemployee/:id", softdeleteemployee);
 router.put("/updatesingleemployee/:id", updatesingleemployee);
 router.put("/approveEmp/:id", approveEmp);
@@ -66,6 +65,10 @@ router.post("/request", requestpoints);
 router.get("/allrequest", allrequest);
 router.post('/review/:id', pointsreview);
 router.get('/empleader', getleaderboard);
+router.get("/singlesaledata/:ID", singlesaledata);
+router.get("/saledata/:empid", saledata);
+router.put("/updatesaleform/:id", updatesaleform)
+
 
 // manager routes
 router.post("/signupManager", signupManager);

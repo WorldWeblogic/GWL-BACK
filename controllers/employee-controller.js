@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
 const Employee = require("../models/employee-model");
+const Saleform = require("../models/Saleform-model");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
@@ -9,7 +10,8 @@ const PointRequest = require("../models/Employeepoints-model");
 // Manager requests to add/deduct points
 exports.requestpoints = async (req, res) => {
   try {
-    const { employeeid, type, value, manager, notification, managerEmail } = req.body;
+    const { employeeid, type, value, manager, notification, managerEmail } =
+      req.body;
     if (!type || !value || !manager || !notification) {
       return res.status(400).json({
         success: false,
@@ -40,9 +42,8 @@ exports.requestpoints = async (req, res) => {
       manager,
       value: points,
       notification,
-      managerEmail: managerEmail
-    })
-
+      managerEmail: managerEmail,
+    });
 
     await request.save();
 
@@ -66,12 +67,10 @@ exports.pointsreview = async (req, res) => {
     const request = await PointRequest.findById(req.params.id);
 
     if (!request || request.status !== "pending") {
-      return res
-        .status(400)
-        .json({
-          success: false,
-          message: "Invalid or already processed request.",
-        });
+      return res.status(400).json({
+        success: false,
+        message: "Invalid or already processed request.",
+      });
     }
 
     if (approved) {
@@ -133,11 +132,69 @@ exports.allrequest = async (req, res) => {
   }
 };
 
-
 exports.monthlysaleform = async (req, res) => {
   try {
     const data = req.body;
-    const employeeId = req.params.id;
+    // Calculate points
+    let points = 0;
+    if (data.serviceSales >= 1000) points += 2;
+    if (data.monthlySales >= 10000) points += 10;
+    if (data.docSales >= 100) points += 10;
+    if (data.transportSales >= 100) points += 10;
+    if (data.handlingSales >= 100) points += 10;
+    if (data.freightSales >= 60) points += 10;
+    if (data.newCustomerSales >= 10000) points += 50;
+    if (data.employeeQuarter === "yes") points += 10;
+    if (data.digitalTraining === "yes") points += 20;
+    if (data.bookRead === "yes") points += 20;
+    if (data.marketingMaterial > 0) points += data.marketingMaterial * 6;
+    if (data.csrCompleted === "yes") points += 20;
+
+    const employee = await Employee.findById(data.Id);
+
+    if (!employee) {
+      return res.status(404).json({
+        success: false,
+        message: "Employee not found",
+      });
+    }
+    // Prepare update object
+    const newData = await Saleform({
+      docSales: data.docSales,
+      transportSales: data.transportSales,
+      serviceSales: data.serviceSales,
+      handlingSales: data.handlingSales,
+      freightSales: data.freightSales,
+      servicesold: data.servicesold,
+      newCustomer: data.newCustomer,
+      newCustomerSales: data.newCustomerSales,
+      digitalTraining: data.digitalTraining,
+      bookRead: data.bookRead,
+      csrProgram: data.csrProgram,
+      marketingMaterials: data.marketingMaterials,
+      points: points,
+      empid: employee._id,
+    });
+
+    await newData.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Monthly sales data uploaded successfully",
+      employee: newData,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      message: err.message,
+    });
+  }
+};
+
+exports.updatesaleform = async (req, res) => {
+  try {
+    const data = req.body;
+    const formId = req.params.id;
 
     // Calculate points
     let points = 0;
@@ -171,29 +228,79 @@ exports.monthlysaleform = async (req, res) => {
       points: points,
     };
 
-    // Update employee by ID
-    const updatedEmployee = await Employee.findByIdAndUpdate(
-      employeeId,
+    // Update by ID
+    const updatedform = await Saleform.findByIdAndUpdate(
+      formId,
       { $set: updateData },
       { new: true }
     );
 
-    if (!updatedEmployee) {
+    if (!updatedform) {
       return res.status(404).json({
         success: false,
-        message: "Employee not found",
+        message: "form not found",
       });
     }
-
     res.status(200).json({
       success: true,
       message: "Monthly sales data updated successfully",
-      employee: updatedEmployee,
+      updatedform,
     });
   } catch (err) {
     return res.status(500).json({
       success: false,
       message: err.message,
+    });
+  }
+};
+
+exports.saledata = async (req, res) => {
+  const empid = req.params.empid;
+
+  try {
+    const latestSale = await Saleform.find({ empid }).sort({ createdAt: -1 });
+
+    if (!latestSale) {
+      return res.status(404).json({
+        success: false,
+        message: "No sale data found for the given employee ID",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      sale: latestSale,
+    });
+  } catch (err) {
+    console.error("Error fetching sale:", err);
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
+  }
+};
+
+
+exports.singlesaledata = async (req, res) => {
+  try {
+    const latestSale = await Saleform.findById(req.params.ID);
+
+    if (!latestSale) {
+      return res.status(404).json({
+        success: false,
+        message: "No sale data found ",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      sale: latestSale,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      success: false,
+      message: "Server error",
     });
   }
 };
@@ -275,8 +382,10 @@ exports.getallemployee = async (req, res) => {
 
 exports.getleaderboard = async (req, res) => {
   try {
-
-    const employees = await Employee.find({ isDeleted: false, status: "Approved" }).sort({ TotalPoints: -1 });
+    const employees = await Employee.find({
+      isDeleted: false,
+      status: "Approved",
+    }).sort({ TotalPoints: -1 });
 
     res.status(200).json({
       success: true,
@@ -464,8 +573,16 @@ exports.deleteEmp = async (req, res) => {
 // create new employee
 exports.signupEmployee = async (req, res) => {
   try {
-    const { email, password, firstname, lastname, employeeid, phone, manager, managerEmail } =
-      req.body;
+    const {
+      email,
+      password,
+      firstname,
+      lastname,
+      employeeid,
+      phone,
+      manager,
+      managerEmail,
+    } = req.body;
     if (
       !email ||
       !password ||
@@ -523,7 +640,7 @@ exports.signupEmployee = async (req, res) => {
       employeeid,
       phone,
       manager,
-      managerEmail: managerEmail
+      managerEmail: managerEmail,
     });
     let token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, {
       expiresIn: "7d",
@@ -603,7 +720,6 @@ exports.loginEmployee = async (req, res) => {
       success: false,
       message: err.message,
     });
-    //next(err);
   }
 };
 
