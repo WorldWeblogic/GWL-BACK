@@ -1,4 +1,3 @@
-// File: controllers/Company-controller.js
 const express = require("express");
 const Company = require("../models/Company-model");
 const jwt = require("jsonwebtoken");
@@ -12,32 +11,70 @@ exports.customerupdatesaleform = async (req, res) => {
     const data = req.body;
     const Id = req.params.ID;
 
-    // Prepare update object
-    const updateData = {
-      documentation:data.documentation,
-      handling:data.handling,
-      agency:data.agency,
-      GWLHandling:data.GWLHandling,
-      freight:data.freight,
-      loading:data.loading,
-      offloading:data.offloading,
-      storage:data.storage,
-      transport:data.transport,
-    };
-
-    // Update by ID
-    const updatedform = await CustomerSaleform.findByIdAndUpdate(
-      Id,
-      { $set: updateData },
-      { new: true }
-    );
-
-    if (!updatedform) {
+    // Find the document by ID
+    let form = await CustomerSaleform.findById(Id);
+    if (!form) {
       return res.status(404).json({
         success: false,
-        message: "form not found",
+        message: "Form not found",
       });
     }
+
+    // Update fields
+    form.documentation = data.documentation;
+    form.handling = data.handling;
+    form.agency = data.agency;
+    form.GWLHandling = data.GWLHandling;
+    form.freight = data.freight;
+    form.loading = data.loading;
+    form.offloading = data.offloading;
+    form.storage = data.storage;
+    form.transport = data.transport;
+
+    // Recalculate points
+    let points = 0;
+
+    if (data.documentation && data.documentation > 0) {
+      points += Math.floor(data.documentation / 50) * 2;
+    }
+
+    if (data.loading && data.loading > 0) {
+      points += data.loading * 2;
+    }
+
+    if (data.offloading && data.offloading > 0) {
+      points += data.offloading * 2;
+    }
+
+    if (data.transport && data.transport > 0) {
+      points += Math.floor(data.transport / 20) * 2;
+    }
+
+    if (data.storage && data.storage > 0) {
+      points += data.storage * 5;
+    }
+
+    if (data.handling && data.handling > 0) {
+      points += data.handling * 5;
+    }
+
+    if (data.agency && data.agency > 0) {
+      points += data.agency * 2;
+    }
+
+    if (data.GWLHandling && data.GWLHandling > 0) {
+      points += data.GWLHandling * 2;
+    }
+
+    if (data.freight && data.freight > 0) {
+      points += data.freight * 2;
+    }
+
+    form.points = points;
+
+    // Save updated document
+    const updatedform = await form.save();
+
     res.status(200).json({
       success: true,
       message: "Monthly sales data updated successfully",
@@ -101,13 +138,11 @@ exports.companysaleform = async (req, res) => {
 
     // Calculate points
     let points = 0;
-
    
     if (data.documentation && data.documentation > 0) {
       points += Math.floor(data.documentation / 50) * 2;
     }
 
- 
     if (data.loading && data.loading > 0) {
       points += data.loading * 2;
     }
@@ -176,43 +211,6 @@ exports.companysaleform = async (req, res) => {
     });
   }
 };
-
-// exports.companysaleform = async (req, res) => {
-//   try {
-//     const data = req.body;
-//     if(!data){
-//       res.status(404).json({
-//         success:false,
-//         message:"data is not found",
-//       })
-//     }
-//     const newData = await CustomerSaleform({
-//       documentation:data.documentation,
-//       handling:data.handling,
-//       agency:data.agency,
-//       GWLHandling:data.GWLHandling,
-//       freight:data.freight,
-//       loading:data.loading,
-//       offloading:data.offloading,
-//       storage:data.storage,
-//       transport:data.transport,
-//       id:data.id
-//     });
-
-//     await newData.save();
-
-//     res.status(200).json({
-//       success: true,
-//       message: "Monthly sales data uploaded successfully",
-//       newData,
-//     });
-//   } catch (err) {
-//     return res.status(500).json({
-//       success: false,
-//       message: err.message,
-//     });
-//   }
-// };
 
 exports.requestcompanypoints = async (req, res) => {
   try {

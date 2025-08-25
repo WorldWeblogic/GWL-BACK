@@ -29,6 +29,8 @@ const { CreateCompany, softdeletecompany, getallcompany, updatecompany, approvec
 const { signuplowerManager, loginlowerManager, lowermanager, updatelowerManager, getallLowermanager, softdeletelowermanager, updatesingleLManager, getLastLowerManId } = require('../controllers/lowermanager-controller');
 
 const { sendMail } = require("../controllers/mail-controller");
+const { createRedeemRequest, getRedeemRequest } = require('../controllers/empRedeempoint-controller');
+const { createcustRedeemRequest, getcustRedeemRequest } = require('../controllers/cusRedeempoint-controller');
 
 // user routes
 // router.post("/signup",validate(addcustomerschema),signup);
@@ -42,6 +44,8 @@ router.put("/update-singlecustomer/:id", updatesinglecustomer);
 router.put("/approvecustomer/:id", approvecustomer);
 router.put("/deletecustomer/:id", deleteCustomer);
 router.put("/rejectcustomer/:id", rejectcustomer);
+router.post("/custredeem",createcustRedeemRequest);
+router.get("/getcustredeemrequest/:id",getcustRedeemRequest)
 
 // admin routes
 router.post("/signupAdmin", signupAdmin);
@@ -67,8 +71,9 @@ router.post('/review/:id', pointsreview);
 router.get('/empleader', getleaderboard);
 router.get("/singlesaledata/:ID", singlesaledata);
 router.get("/saledata/:empid", saledata);
-router.put("/updatesaleform/:id", updatesaleform)
-
+router.put("/updatesaleform/:id", updatesaleform);
+router.post("/redeem",createRedeemRequest);
+router.get("/getredeemrequest/:id",getRedeemRequest)
 
 // manager routes
 router.post("/signupManager", signupManager);
@@ -177,5 +182,3 @@ router.get("/getLastLowerMan", getLastLowerManId)
 router.post('/send-mail', sendMail);
 
 module.exports = router;
-
-

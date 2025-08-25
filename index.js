@@ -46,8 +46,6 @@ app.get("/", (req, res) => {
   });
 });
 
-
-
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // Routes
